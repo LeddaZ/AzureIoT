@@ -44,19 +44,19 @@ jobs:
         run: dotnet publish ./Receiver --configuration Release --output ./output/Receiver
 
       - name: Upload AzureIoT artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: AzureIoT-${{ matrix.os }}
           path: ./output/AzureIoT
 
       - name: Upload WebAPI artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: WebAPI-${{ matrix.os }}
           path: ./output/WebAPI
 
       - name: Upload Receiver artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Receiver-${{ matrix.os }}
           path: ./output/Receiver
