@@ -8,10 +8,10 @@ on:
 jobs:
   build:
     name: Build .NET Core Application
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        targets: [win-x86, win-x64, win-arm64, linux-x64, linux-arm64, osx-x64, osx-arm64]
     
     steps:
       - name: Checkout repository
@@ -35,28 +35,28 @@ jobs:
         run: dotnet build ./Receiver --no-restore --configuration Release
 
       - name: Publish AzureIoT
-        run: dotnet publish ./AzureIoT --configuration Release --output ./output/AzureIoT --self-contained
+        run: dotnet publish -r ${{ matrix.targets }} ./AzureIoT --configuration Release --output ./output/AzureIoT-${{ matrix.targets }} --self-contained
 
       - name: Publish WebAPI
-        run: dotnet publish ./WebAPI --configuration Release --output ./output/WebAPI --self-contained
+        run: dotnet publish -r ${{ matrix.targets }} ./WebAPI --configuration Release --output ./output/WebAPI-${{ matrix.targets }} --self-contained
 
       - name: Publish Receiver
-        run: dotnet publish ./Receiver --configuration Release --output ./output/Receiver --self-contained
+        run: dotnet publish -r ${{ matrix.targets }} ./Receiver --configuration Release --output ./output/Receiver-${{ matrix.targets }} --self-contained
 
       - name: Upload AzureIoT artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: AzureIoT-${{ matrix.os }}
-          path: ./output/AzureIoT
+          name: AzureIoT-${{ matrix.targets }}
+          path: ./output/AzureIoT-${{ matrix.targets }}
 
       - name: Upload WebAPI artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: WebAPI-${{ matrix.os }}
-          path: ./output/WebAPI
+          name: WebAPI-${{ matrix.targets }}
+          path: ./output/WebAPI-${{ matrix.targets }}
 
       - name: Upload Receiver artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Receiver-${{ matrix.os }}
-          path: ./output/Receiver
+          name: Receiver-${{ matrix.targets }}
+          path: ./output/Receiver-${{ matrix.targets }}
