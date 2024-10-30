@@ -1,0 +1,65 @@
+name: .NET Core Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build .NET Core Application
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build AzureIoT
+        run: dotnet build ./AzureIoT --no-restore --configuration Release
+
+      - name: Build WebAPI
+        run: dotnet build ./WebAPI --no-restore --configuration Release
+
+      - name: Build Receiver
+        run: dotnet build ./Receiver --no-restore --configuration Release
+
+      - name: Publish AzureIoT
+        run: dotnet publish ./AzureIoT --configuration Release --output ./output/AzureIoT
+
+      - name: Publish WebAPI
+        run: dotnet publish ./WebAPI --configuration Release --output ./output/WebAPI
+
+      - name: Publish Receiver
+        run: dotnet publish ./Receiver --configuration Release --output ./output/Receiver
+
+      - name: Upload AzureIoT artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: AzureIoT-${{ matrix.os }}
+          path: ./output/AzureIoT
+
+      - name: Upload WebAPI artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: WebAPI-${{ matrix.os }}
+          path: ./output/WebAPI
+
+      - name: Upload Receiver artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Receiver-${{ matrix.os }}
+          path: ./output/Receiver
