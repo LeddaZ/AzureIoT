@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "AzureIoT": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "HOST_NAME": "",
+        "DEVICE_ID": "",
+        "ACCESS_KEY": "",
+        "COSMOS_ENDPOINT": "",
+        "COSMOS_KEY": "",
+        "DB_NAME": "",
+        "CONTAINER_ID": ""
+      }
+    }
+  }
+}
