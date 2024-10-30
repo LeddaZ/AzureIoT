@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 /AzureIoT/Properties/launchSettings.json
 /IoTAPI/appsettings.json
+/WebAPI/appsettings.Development.json
