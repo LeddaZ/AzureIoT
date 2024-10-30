@@ -9,5 +9,4 @@
         public DateTime DataRicezione { get; set; }
         public bool Received { get; set; }
     }
-
 }

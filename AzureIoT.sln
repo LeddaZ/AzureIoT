@@ -5,9 +5,14 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureIoT", "AzureIoT\AzureIoT.csproj", "{A1621E9D-2C3B-4698-AD0C-54714DABEBB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{D4D0C6BB-45E8-49AE-A2F6-47E99A91A519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "WebAPI\WebAPI.csproj", "{D4D0C6BB-45E8-49AE-A2F6-47E99A91A519}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Receiver", "Receiver\Receiver.csproj", "{CFB0A6D6-2FB4-40F5-9248-41F161BE5F3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Receiver", "Receiver\Receiver.csproj", "{CFB0A6D6-2FB4-40F5-9248-41F161BE5F3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{619D911D-4C7D-4B46-BF31-5925D08ACADA}"
+	ProjectSection(SolutionItems) = preProject
+		.csharpierrc = .csharpierrc
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

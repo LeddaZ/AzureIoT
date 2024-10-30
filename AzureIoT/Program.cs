@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using Microsoft.Azure.Devices;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Devices;
 using Newtonsoft.Json;
 
 namespace AzureIoT
@@ -17,14 +17,25 @@ namespace AzureIoT
 
     class Program
     {
-        private static readonly string HostName = Environment.GetEnvironmentVariable("HOST_NAME") ?? "";
-        private static readonly string DeviceId = Environment.GetEnvironmentVariable("DEVICE_ID") ?? "";
-        private static readonly string AccessKey = Environment.GetEnvironmentVariable("ACCESS_KEY") ?? "";
-        private static readonly string connectionString = "HostName="+HostName+";SharedAccessKeyName=iothubowner;SharedAccessKey="+AccessKey;
-        private static readonly string cosmosEndpointUri = Environment.GetEnvironmentVariable("COSMOS_ENDPOINT") ?? "";
-        private static readonly string cosmosPrimaryKey = Environment.GetEnvironmentVariable("COSMOS_KEY") ?? "";
-        private static readonly string cosmosDatabase = Environment.GetEnvironmentVariable("DB_NAME") ?? "";
-        private static readonly string cosmosContainerId = Environment.GetEnvironmentVariable("CONTAINER_ID") ?? "";
+        private static readonly string HostName =
+            Environment.GetEnvironmentVariable("HOST_NAME") ?? "";
+        private static readonly string DeviceId =
+            Environment.GetEnvironmentVariable("DEVICE_ID") ?? "";
+        private static readonly string AccessKey =
+            Environment.GetEnvironmentVariable("ACCESS_KEY") ?? "";
+        private static readonly string connectionString =
+            "HostName="
+            + HostName
+            + ";SharedAccessKeyName=iothubowner;SharedAccessKey="
+            + AccessKey;
+        private static readonly string cosmosEndpointUri =
+            Environment.GetEnvironmentVariable("COSMOS_ENDPOINT") ?? "";
+        private static readonly string cosmosPrimaryKey =
+            Environment.GetEnvironmentVariable("COSMOS_KEY") ?? "";
+        private static readonly string cosmosDatabase =
+            Environment.GetEnvironmentVariable("DB_NAME") ?? "";
+        private static readonly string cosmosContainerId =
+            Environment.GetEnvironmentVariable("CONTAINER_ID") ?? "";
 
         static async Task Main(string[] args)
         {
@@ -40,7 +51,12 @@ namespace AzureIoT
 
             try
             {
-                await SendCloudToDeviceMessageAsync(MessageID, Timestamp, serviceClient, num.ToString());
+                await SendCloudToDeviceMessageAsync(
+                    MessageID,
+                    Timestamp,
+                    serviceClient,
+                    num.ToString()
+                );
                 Console.WriteLine("Message sent to device!");
             }
             catch (Exception ex)
@@ -59,22 +75,38 @@ namespace AzureIoT
             }
         }
 
-        private static async Task SendCloudToDeviceMessageAsync(string MessageID, string Timestamp, ServiceClient serviceClient, string messageContent)
+        private static async Task SendCloudToDeviceMessageAsync(
+            string MessageID,
+            string Timestamp,
+            ServiceClient serviceClient,
+            string messageContent
+        )
         {
-            var message = new Message(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new
-            {
-                MessageContent = messageContent,
-                MessageID,
-                Timestamp,
-                DeviceId,
-                Received = false
-            })));
+            var message = new Message(
+                Encoding.ASCII.GetBytes(
+                    JsonConvert.SerializeObject(
+                        new
+                        {
+                            MessageContent = messageContent,
+                            MessageID,
+                            Timestamp,
+                            DeviceId,
+                            Received = false,
+                        }
+                    )
+                )
+            );
             message.Properties.Add("MessageType", "Command");
 
             await serviceClient.SendAsync(DeviceId, message);
         }
 
-        private static async Task SaveMessageToCosmosDBAsync(string MessageID, string Timestamp, Container container, double value)
+        private static async Task SaveMessageToCosmosDBAsync(
+            string MessageID,
+            string Timestamp,
+            Container container,
+            double value
+        )
         {
             var messageRecord = new MessageRecord
             {
@@ -83,10 +115,13 @@ namespace AzureIoT
                 DeviceId = DeviceId,
                 Value = value,
                 Timestamp = DateTime.Parse(Timestamp),
-                Received = false
+                Received = false,
             };
 
-            await container.CreateItemAsync(messageRecord, new PartitionKey(messageRecord.MessageID));
+            await container.CreateItemAsync(
+                messageRecord,
+                new PartitionKey(messageRecord.MessageID)
+            );
         }
     }
 }

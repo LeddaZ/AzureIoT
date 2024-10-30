@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -17,8 +18,11 @@ string databaseId = cosmosDbConfig["DatabaseId"] ?? "";
 string containerId = cosmosDbConfig["ContainerId"] ?? "";
 
 builder.Services.AddSingleton<CosmosClient>(new CosmosClient(endpoint, primaryKey));
-builder.Services.AddSingleton<ICosmosDbService>(provider =>
-    new CosmosDbService(provider.GetRequiredService<CosmosClient>(), databaseId, containerId));
+builder.Services.AddSingleton<ICosmosDbService>(provider => new CosmosDbService(
+    provider.GetRequiredService<CosmosClient>(),
+    databaseId,
+    containerId
+));
 
 var app = builder.Build();
 

@@ -7,20 +7,36 @@ namespace Receiver
 {
     class Program
     {
-        private static readonly string cosmosEndpointUri = Environment.GetEnvironmentVariable("COSMOS_ENDPOINT") ?? "";
-        private static readonly string cosmosPrimaryKey = Environment.GetEnvironmentVariable("COSMOS_KEY") ?? "";
-        private static readonly string cosmosDatabase = Environment.GetEnvironmentVariable("DB_NAME") ?? "";
-        private static readonly string cosmosContainerId = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "";
-        private static readonly string HostName = Environment.GetEnvironmentVariable("HOST_NAME") ?? "";
-        private static readonly string DeviceId = Environment.GetEnvironmentVariable("DEVICE_ID") ?? "";
-        private static readonly string AccessKey = Environment.GetEnvironmentVariable("ACCESS_KEY") ?? "";
-        private static readonly string connectionString = "HostName=" + HostName + ";SharedAccessKeyName=iothubowner;SharedAccessKey=" + AccessKey + ";DeviceId=" + DeviceId;
+        private static readonly string cosmosEndpointUri =
+            Environment.GetEnvironmentVariable("COSMOS_ENDPOINT") ?? "";
+        private static readonly string cosmosPrimaryKey =
+            Environment.GetEnvironmentVariable("COSMOS_KEY") ?? "";
+        private static readonly string cosmosDatabase =
+            Environment.GetEnvironmentVariable("DB_NAME") ?? "";
+        private static readonly string cosmosContainerId =
+            Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "";
+        private static readonly string HostName =
+            Environment.GetEnvironmentVariable("HOST_NAME") ?? "";
+        private static readonly string DeviceId =
+            Environment.GetEnvironmentVariable("DEVICE_ID") ?? "";
+        private static readonly string AccessKey =
+            Environment.GetEnvironmentVariable("ACCESS_KEY") ?? "";
+        private static readonly string connectionString =
+            "HostName="
+            + HostName
+            + ";SharedAccessKeyName=iothubowner;SharedAccessKey="
+            + AccessKey
+            + ";DeviceId="
+            + DeviceId;
 
         private static DeviceClient deviceClient;
 
         static async Task Main(string[] args)
         {
-            deviceClient = DeviceClient.CreateFromConnectionString(connectionString, TransportType.Mqtt);
+            deviceClient = DeviceClient.CreateFromConnectionString(
+                connectionString,
+                TransportType.Mqtt
+            );
 
             Console.WriteLine("Device is listening for messages...");
             await ReceiveMessageAsync();
@@ -61,8 +77,9 @@ namespace Receiver
         {
             try
             {
-                var queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.MessaggioID = @messaggioId")
-                    .WithParameter("@messaggioId", message.MessageID);
+                var queryDefinition = new QueryDefinition(
+                    "SELECT * FROM c WHERE c.MessaggioID = @messaggioId"
+                ).WithParameter("@messaggioId", message.MessageID);
                 Console.WriteLine(message.MessageID);
 
                 var cosmosClient = new CosmosClient(cosmosEndpointUri, cosmosPrimaryKey);
@@ -99,6 +116,5 @@ namespace Receiver
             public DateTime DataRicezione { get; set; }
             public bool Received { get; set; }
         }
-
     }
 }

@@ -2,7 +2,8 @@
 
 namespace WebAPI
 {
-    public class CosmosDbService(CosmosClient cosmosClient, string databaseId, string containerId) : ICosmosDbService
+    public class CosmosDbService(CosmosClient cosmosClient, string databaseId, string containerId)
+        : ICosmosDbService
     {
         private readonly Container _container = cosmosClient.GetContainer(databaseId, containerId);
 
@@ -34,9 +35,13 @@ namespace WebAPI
             return results;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesByDateRange(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<Message>> GetMessagesByDateRange(
+            DateTime startDate,
+            DateTime endDate
+        )
         {
-            var query = $"SELECT * FROM c WHERE c.Timestamp >= '{startDate:O}' AND c.Timestamp <= '{endDate:O}'";
+            var query =
+                $"SELECT * FROM c WHERE c.Timestamp >= '{startDate:O}' AND c.Timestamp <= '{endDate:O}'";
             var iterator = _container.GetItemQueryIterator<Message>(query);
             var results = new List<Message>();
 
@@ -96,5 +101,4 @@ namespace WebAPI
             return ("Avg: " + avg + ", Min: " + min + ", Max: " + max);
         }
     }
-
 }
