@@ -484,3 +484,4 @@ $RECYCLE.BIN/
 *.swp
 
 /AzureIoT/Properties/launchSettings.json
+/IoTAPI/appsettings.json

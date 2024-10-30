@@ -10,7 +10,7 @@ namespace AzureIoT
         public required string id { get; set; }
         public required string MessaggioID { get; set; }
         public required string DeviceId { get; set; }
-        public required string MessageContent { get; set; }
+        public required double MessageContent { get; set; }
         public DateTime Timestamp { get; set; }
         public bool Received { get; set; }
     }
@@ -33,14 +33,12 @@ namespace AzureIoT
             var database = cosmosClient.GetDatabase(cosmosDatabase);
             var container = database.GetContainer(cosmosContainerId);
 
-            Random r = new Random();
-            double num = r.Next(-4, 4) + (r.Next(0, 9) / 10);
-
-            string messageContent = num.ToString();
+            Console.Write("Enter a number: ");
+            double num = Convert.ToDouble(Console.ReadLine());
 
             try
             {
-                await SendCloudToDeviceMessageAsync(serviceClient, messageContent);
+                await SendCloudToDeviceMessageAsync(serviceClient, num.ToString());
                 Console.WriteLine("Message sent to device!");
             }
             catch (Exception ex)
@@ -50,7 +48,7 @@ namespace AzureIoT
 
             try
             {
-                await SaveMessageToCosmosDBAsync(container, messageContent);
+                await SaveMessageToCosmosDBAsync(container, num.ToString());
                 Console.WriteLine("Message saved to CosmosDB!");
             }
             catch (Exception ex)
@@ -78,7 +76,7 @@ namespace AzureIoT
                 id = Guid.NewGuid().ToString(),
                 MessaggioID = Guid.NewGuid().ToString(),
                 DeviceId = DeviceId,
-                MessageContent = messageContent,
+                MessageContent = Convert.ToDouble(messageContent),
                 Timestamp = DateTime.UtcNow,
                 Received = false
             };
