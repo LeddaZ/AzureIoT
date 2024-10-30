@@ -35,13 +35,13 @@ jobs:
         run: dotnet build ./Receiver --no-restore --configuration Release
 
       - name: Publish AzureIoT
-        run: dotnet publish ./AzureIoT --configuration Release --output ./output/AzureIoT
+        run: dotnet publish ./AzureIoT --configuration Release --output ./output/AzureIoT --self-contained
 
       - name: Publish WebAPI
-        run: dotnet publish ./WebAPI --configuration Release --output ./output/WebAPI
+        run: dotnet publish ./WebAPI --configuration Release --output ./output/WebAPI --self-contained
 
       - name: Publish Receiver
-        run: dotnet publish ./Receiver --configuration Release --output ./output/Receiver
+        run: dotnet publish ./Receiver --configuration Release --output ./output/Receiver --self-contained
 
       - name: Upload AzureIoT artifacts
         uses: actions/upload-artifact@v4
