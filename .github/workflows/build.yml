@@ -43,20 +43,21 @@ jobs:
       - name: Publish Receiver
         run: dotnet publish -r ${{ matrix.targets }} ./Receiver --configuration Release --output ./output/Receiver-${{ matrix.targets }} --self-contained
 
-      - name: Upload AzureIoT artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: AzureIoT-${{ matrix.targets }}
-          path: ./output/AzureIoT-${{ matrix.targets }}
+      - name: Zip AzureIoT artifacts
+        run: zip -r AzureIoT-${{ matrix.targets }}.zip ./output/AzureIoT-${{ matrix.targets }}
 
-      - name: Upload WebAPI artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebAPI-${{ matrix.targets }}
-          path: ./output/WebAPI-${{ matrix.targets }}
+      - name: Zip WebAPI artifacts
+        run: zip -r WebAPI-${{ matrix.targets }}.zip ./output/WebAPI-${{ matrix.targets }}
 
-      - name: Upload Receiver artifacts
-        uses: actions/upload-artifact@v4
+      - name: Zip Receiver artifacts
+        run: zip -r Receiver-${{ matrix.targets }}.zip ./output/Receiver-${{ matrix.targets }}
+
+      - name: Release builds
+        uses: softprops/action-gh-release@v2
         with:
-          name: Receiver-${{ matrix.targets }}
-          path: ./output/Receiver-${{ matrix.targets }}
+          tag_name: ${{ matrix.targets }}
+          name: Latest build for ${{ matrix.targets }}
+          files: |
+            AzureIoT-${{ matrix.targets }}.zip
+            WebAPI-${{ matrix.targets }}.zip
+            Receiver-${{ matrix.targets }}.zip
