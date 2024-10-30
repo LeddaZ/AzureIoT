@@ -1,16 +1,16 @@
 ﻿using System.Text;
 using Microsoft.Azure.Devices;
 using Microsoft.Azure.Cosmos;
-using Azure.Messaging;
+using Newtonsoft.Json;
 
 namespace AzureIoT
 {
     public class MessageRecord
     {
         public required string id { get; set; }
-        public required string MessaggioID { get; set; }
+        public required string MessageID { get; set; }
         public required string DeviceId { get; set; }
-        public required double MessageContent { get; set; }
+        public required double Value { get; set; }
         public DateTime Timestamp { get; set; }
         public bool Received { get; set; }
     }
@@ -35,10 +35,12 @@ namespace AzureIoT
 
             Console.Write("Enter a number: ");
             double num = Convert.ToDouble(Console.ReadLine());
+            string MessageID = Guid.NewGuid().ToString();
+            string Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
             try
             {
-                await SendCloudToDeviceMessageAsync(serviceClient, num.ToString());
+                await SendCloudToDeviceMessageAsync(MessageID, Timestamp, serviceClient, num.ToString());
                 Console.WriteLine("Message sent to device!");
             }
             catch (Exception ex)
@@ -48,7 +50,7 @@ namespace AzureIoT
 
             try
             {
-                await SaveMessageToCosmosDBAsync(container, num.ToString());
+                await SaveMessageToCosmosDBAsync(MessageID, Timestamp, container, num);
                 Console.WriteLine("Message saved to CosmosDB!");
             }
             catch (Exception ex)
@@ -57,31 +59,34 @@ namespace AzureIoT
             }
         }
 
-        private static async Task SendCloudToDeviceMessageAsync(ServiceClient serviceClient, string messageContent)
+        private static async Task SendCloudToDeviceMessageAsync(string MessageID, string Timestamp, ServiceClient serviceClient, string messageContent)
         {
-            var message = new Message(Encoding.ASCII.GetBytes(messageContent));
+            var message = new Message(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new
+            {
+                MessageContent = messageContent,
+                MessageID,
+                Timestamp,
+                DeviceId,
+                Received = false
+            })));
             message.Properties.Add("MessageType", "Command");
-            message.Properties.Add("MessageId", Guid.NewGuid().ToString());
-            message.Properties.Add("DeviceId", DeviceId);
-            message.Properties.Add("Timestamp", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"));
-            message.Properties.Add("Received", "false");
 
             await serviceClient.SendAsync(DeviceId, message);
         }
 
-        private static async Task SaveMessageToCosmosDBAsync(Container container, string messageContent)
+        private static async Task SaveMessageToCosmosDBAsync(string MessageID, string Timestamp, Container container, double value)
         {
             var messageRecord = new MessageRecord
             {
                 id = Guid.NewGuid().ToString(),
-                MessaggioID = Guid.NewGuid().ToString(),
+                MessageID = MessageID,
                 DeviceId = DeviceId,
-                MessageContent = Convert.ToDouble(messageContent),
-                Timestamp = DateTime.UtcNow,
+                Value = value,
+                Timestamp = DateTime.Parse(Timestamp),
                 Received = false
             };
 
-            await container.CreateItemAsync(messageRecord, new PartitionKey(messageRecord.MessaggioID));
+            await container.CreateItemAsync(messageRecord, new PartitionKey(messageRecord.MessageID));
         }
     }
 }

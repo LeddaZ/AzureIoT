@@ -2,10 +2,10 @@
 {
     public interface ICosmosDbService
     {
-        Task<IEnumerable<Message>> GetAllMessagesAsync();
-        Task<IEnumerable<Message>> GetMessagesByValueRangeAsync(double min, double max);
-        Task<IEnumerable<Message>> GetMessagesByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<int> GetTotalMessageCountAsync();
-        Task<string> GetStatisticsAsync();
+        Task<IEnumerable<Message>> GetAllMessages();
+        Task<IEnumerable<Message>> GetMessagesByValueRange(double min, double max);
+        Task<IEnumerable<Message>> GetMessagesByDateRange(DateTime startDate, DateTime endDate);
+        Task<int> GetTotalMessageCount();
+        Task<string> GetStatistics();
     }
 }

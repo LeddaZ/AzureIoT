@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Receiver": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "HOST_NAME": "",
+        "ACCESS_KEY": "",
+        "DEVICE_ID": "",
+        "COSMOS_ENDPOINT": "",
+        "COSMOS_KEY": "",
+        "DB_NAME": "",
+        "CONTAINER_NAME": ""
+      }
+    }
+  }
+}

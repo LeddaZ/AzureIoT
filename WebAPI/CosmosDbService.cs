@@ -2,16 +2,11 @@
 
 namespace WebAPI
 {
-    public class CosmosDbService : ICosmosDbService
+    public class CosmosDbService(CosmosClient cosmosClient, string databaseId, string containerId) : ICosmosDbService
     {
-        private readonly Container _container;
+        private readonly Container _container = cosmosClient.GetContainer(databaseId, containerId);
 
-        public CosmosDbService(CosmosClient cosmosClient, string databaseId, string containerId)
-        {
-            _container = cosmosClient.GetContainer(databaseId, containerId);
-        }
-
-        public async Task<IEnumerable<Message>> GetAllMessagesAsync()
+        public async Task<IEnumerable<Message>> GetAllMessages()
         {
             var query = "SELECT * FROM c";
             var iterator = _container.GetItemQueryIterator<Message>(query);
@@ -25,9 +20,9 @@ namespace WebAPI
             return results;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesByValueRangeAsync(double min, double max)
+        public async Task<IEnumerable<Message>> GetMessagesByValueRange(double min, double max)
         {
-            var query = $"SELECT * FROM c WHERE c.MessageContent >= {min} AND c.MessageContent <= {max}";
+            var query = $"SELECT * FROM c WHERE c.Value >= {min} AND c.Value <= {max}";
             var iterator = _container.GetItemQueryIterator<Message>(query);
             var results = new List<Message>();
 
@@ -39,7 +34,7 @@ namespace WebAPI
             return results;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesByDateRangeAsync(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<Message>> GetMessagesByDateRange(DateTime startDate, DateTime endDate)
         {
             var query = $"SELECT * FROM c WHERE c.Timestamp >= '{startDate:O}' AND c.Timestamp <= '{endDate:O}'";
             var iterator = _container.GetItemQueryIterator<Message>(query);
@@ -53,7 +48,7 @@ namespace WebAPI
             return results;
         }
 
-        public async Task<int> GetTotalMessageCountAsync()
+        public async Task<int> GetTotalMessageCount()
         {
             var query = "SELECT VALUE COUNT(1) FROM c";
             var iterator = _container.GetItemQueryIterator<int>(query);
@@ -66,9 +61,9 @@ namespace WebAPI
             return 0;
         }
 
-        public async Task<string> GetStatisticsAsync()
+        public async Task<string> GetStatistics()
         {
-            var avgQuery = "SELECT VALUE AVG(c.MessageContent) FROM c";
+            var avgQuery = "SELECT VALUE AVG(c.Value) FROM c";
             var avgIterator = _container.GetItemQueryIterator<double>(avgQuery);
             double avg = 0;
 
@@ -78,7 +73,7 @@ namespace WebAPI
                 avg = avgResponse.FirstOrDefault();
             }
 
-            var minQuery = "SELECT VALUE MIN(c.MessageContent) FROM c";
+            var minQuery = "SELECT VALUE MIN(c.Value) FROM c";
             var minIterator = _container.GetItemQueryIterator<double>(minQuery);
             double min = 0;
 
@@ -88,7 +83,7 @@ namespace WebAPI
                 min = minResponse.FirstOrDefault();
             }
 
-            var maxQuery = "SELECT VALUE MAX(c.MessageContent) FROM c";
+            var maxQuery = "SELECT VALUE MAX(c.Value) FROM c";
             var maxIterator = _container.GetItemQueryIterator<double>(maxQuery);
             double max = 0;
 
